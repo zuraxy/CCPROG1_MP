@@ -139,7 +139,7 @@ getQtyNeckSize (int * qty, char * neckLine, char * size)
 	printf("\n\nOrder Form\n"); 
 	
 	//call 'child' functions.
+	getSize(size);
 	getQuantity(qty);
 	getNeckLine(neckLine);
-	getSize(size);
 }
