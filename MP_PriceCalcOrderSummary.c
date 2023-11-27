@@ -1,3 +1,6 @@
+#include <stdio.h>
+#define ARR_PRICECHECKER printf("arr_addOnsPrice[0] is %.2f\narr_addOnsPrice[1] is %.2f\narr_addOnsPrice[2] is %.2f\narr_addOnsPrice[3] is %.2f\narr_addOnsPrice[4] is %.2f\narr_addOnsPrice[4] is %.2f\narr_addOnsPrice[5] is %.2f\n",arr_addOnsPrice[0],arr_addOnsPrice[1],arr_addOnsPrice[2],arr_addOnsPrice[3],arr_addOnsPrice[4],arr_addOnsPrice[5]);
+	
 void 
 printSpacesBeforeP(int occupiedSpace)
 {
@@ -31,22 +34,18 @@ basePrice(char size, int qty)
 	if(size=='X')
 	{
 		basePrice = 1.1;
-		printf("entered here. basePrice is now %.2f", basePrice);
 	}
 	
 	switch(qty)
 	{
 		case 5 ... 299:
 			basePrice*=100;
-			printf("basePrice*=100 is %.2f",basePrice);
 			break;
 		case 300 ... 500:
 			basePrice*=80;
-			printf("basePrice*=80 is %.2f",basePrice);
 			break;
 		default:
 			basePrice*=75;
-			printf("basePrice*=75 is %.2f",basePrice);
 			break;
 	}
 	
@@ -126,35 +125,28 @@ handleLogoPrice(int arr_logoColors[], float arr_addOnsPrice[], float * logoSum, 
 	if(qty>500)
 	{
 		logoMultiplier = 0.75;
-		printf("Multip set to 0.75\n");
 	}
 	else if(qty>=300)
 	{
 		logoMultiplier = 0.9;
-		printf("Multip set to 0.9\n");
 	}
 	
 	if(arr_logoColors[counter]==1)
 	{
 		logoCost = 18;
-		printf("logo sum is going to be increased by %.2f\n", 18*logoMultiplier);
 	}
 	else if(arr_logoColors[counter]==2)
 	{
 		logoCost = 20;
-		printf("logo sum is going to be increased by %.2f\n", 20*logoMultiplier);
 	}
 	else if(arr_logoColors[counter]>=3&&arr_logoColors[counter]<=5)
 	{
 		logoCost = 25;
-		printf("logo sum is going to be increased by %.2f\n", 25*logoMultiplier);
 	}
 	
-	printf("logoCost preMultips is %.2f",logoCost);
 	logoCost*=logoMultiplier;
-	printf("logoCost after multiplier is now %.2f",logoCost);
 	arr_addOnsPrice[counter] = logoCost;
-	printf("arr_addOnsPrice[0] is %.2f\narr_addOnsPrice[1] is %.2f\narr_addOnsPrice[2] is %.2f\narr_addOnsPrice[3] is %.2f\narr_addOnsPrice[4] is %.2f\narr_addOnsPrice[4] is %.2f\narr_addOnsPrice[5] is %.2f\n",arr_addOnsPrice[0],arr_addOnsPrice[1],arr_addOnsPrice[2],arr_addOnsPrice[3],arr_addOnsPrice[4],arr_addOnsPrice[5]);
+	//ARR_PRICECHECKER 
 	*logoSum+=logoCost;
 }
 
@@ -174,12 +166,10 @@ addOnsPrice(char arr_addOn[], int arr_logoColors[], float arr_addOnsPrice[], int
 		case 'P':
 			arr_addOnsPrice[counter] = 15;
 			patchSum+=15;
-			printf("patch sum which is now %d was increased by 15\n", patchSum);
 			break;
 		case 'O':
 			arr_addOnsPrice[counter] = 5;
 			pocketSum+=5;
-			printf("pocket sum which is now %d was increased by 5\n", pocketSum);
 			break;
 		default:
 			break;
@@ -187,7 +177,6 @@ addOnsPrice(char arr_addOn[], int arr_logoColors[], float arr_addOnsPrice[], int
 	}
 	
 	addOnsTotalPrice = logoSum + patchSum + pocketSum;
-	printf("\naddOnsTotal = logoSum + patchSum + pocketSum\n%.2f = %.2f + %d + %d\n\n", addOnsTotalPrice, logoSum, patchSum, pocketSum);
 	return addOnsTotalPrice;
 }
 
@@ -309,6 +298,7 @@ orderSummary(char arr_addOn[], int arr_addOnPos[], int arr_logoColors[], float a
 	printShirtDetails(size, neckLine, qty, baseShirtPrice);
 	printAddOnDetails(arr_addOn, arr_addOnPos, arr_logoColors, arr_addOnsPrice);
 	grandTotalCalc(price, qty);
+	
 }
 
 void
@@ -319,12 +309,12 @@ changeBreakdown(float price)
 	int counter = 0,
 	denominationCount = 0;
 	
-	printf("Amount paid by customer: ");
+	printf("\nAmount paid by customer: ");
 	scanf("%f",&amountGiven);
 	
 	while(amountGiven<price)
 	{
-		printf("Invalid.\nEnter valid amount paid by customer (must be higher than total cost %f): ",price);
+		printf("\nInvalid.\nEnter valid amount paid by customer (must be higher than total cost %f): ",price);
 		scanf("%f",&amountGiven);
 	}
 	
@@ -346,10 +336,10 @@ changeBreakdown(float price)
 			printf("  Php %4.2f - %d\n", actualDenomination, denominationCount);
 		}
 		
-		printf("\n");
-		
-		//Change Has To Be Bigger
 		change-=actualDenomination*denominationCount;
 		counter++;
 	}
+	printf("\n");
 }
+
+

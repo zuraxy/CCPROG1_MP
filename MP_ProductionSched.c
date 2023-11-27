@@ -28,23 +28,30 @@ void dayCalc(int Qty, char arr_addOn[])
 int 
 confirmOrder()
 {
-	int saysYes = 0;
+	int saysYes = 0, invalidOption=1;
 	char input = ' ';
-	printf("Confirm order? ");
-	scanf(" %c",&input);
 	
-	switch(input)
+	
+	while(invalidOption)
 	{
-		case 'Y':
-		case 'y':
-			saysYes = 1;
-			break;
-		case 'N':
-		case 'n':
-			saysYes = 0;
-			break;
-		default:
-			break;
+		printf("Confirm order? ");
+		scanf(" %c",&input);
+		switch(input)
+		{
+			case 'Y':
+			case 'y':
+				invalidOption=0;
+				saysYes = 1;
+				break;
+			case 'N':
+			case 'n':
+				invalidOption=0;
+				saysYes = 0;
+				break;
+			default:
+				printf("invalid option. Accepted responses are Y/y/n/N.\n");
+				break;
+		}
 	}
 	
 	return saysYes;
