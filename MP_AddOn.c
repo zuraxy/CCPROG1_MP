@@ -1,22 +1,46 @@
-#include <stdio.h>
-#define OPTION_FOR_ALL " placement options:\n1 - left chest\n2 - right chest"
-#define OPTION_LOGO_PATCH "\n3 - left sleeve\n4 - right sleeve\n\n"
-#define OPTION_POCKET "\n5 - bottom left\n6 - bottom right\n\n"
-#define ADDON_SELECTION "\nAdd-on options:\nL - Logo\nP - Patch\nO - pOcket\n"
 /*
 TO DO:
 *******************************************
-maybe add #defines for standard printfs?
 add maybe 5 attempts or break out of loop option. or detect if no more possible position.
 
 USER CANNOT BE STUCK, NO AVAILABLE FOR P OR L OR O ADD CATCH CASES
 ADD ANOTHER ADD ON SHOULD DISPLAY OPTIONS + space per promptinvalid space
 */
 
+/******************************************
+File Name: MP_AddOn.C
+
+Author: Bon Windel E. Aquino
+Last Update: November 27, 2023
+
+Routines to get the user's inputs for 
+add on types, placements/positions, and
+if applicable, logo colors.
+ 
+The entry point to these routines is the 
+getAddOn() routine at the bottom 
+of this file. It is called in the main function found in MP_Main.c
+******************************************/
+
+#include <stdio.h>
+#define OPTION_FOR_ALL " placement options:\n1 - left chest\n2 - right chest"
+#define OPTION_LOGO_PATCH "\n3 - left sleeve\n4 - right sleeve\n\n"
+#define OPTION_POCKET "\n5 - bottom left\n6 - bottom right\n\n"
+#define ADDON_SELECTION "\nAdd-on options:\nL - Logo\nP - Patch\nO - pOcket\n"
+#define ARRAYS_VISUALIZER printf("\n!@#$%^&*()\ninput accepted.\n addOn is %c\n addOnPos is %d\n addOnsCount is %d\n",arr_addOn[addOnsCount], arr_addOnPos[addOnsCount], addOnsCount); printf("\n!@#$%^&*()\ncurrent array looks like this: \n");	printf("arr_addOn[0] = %c, arr_addOn[1] = %c, arr_addOn[2] = %c, arr_addOn[3] = %c, arr_addOn[4] = %c, arr_addOn[5] = %c\n", arr_addOn[0], arr_addOn[1], arr_addOn[2], arr_addOn[3], arr_addOn[4], arr_addOn[5]); printf("arr_addOnPos[0] = %d, arr_addOnPos[1] = %d, arr_addOnPos[2] = %d, arr_addOnPos[3] = %d, arr_addOnPos[4] = %d, arr_addOnPos[5] = %d\n", arr_addOnPos[0], arr_addOnPos[1], arr_addOnPos[2], arr_addOnPos[3], arr_addOnPos[4], arr_addOnPos[5]);
+
+/*  This function, given a character, prints the corresponding add-on type in full.
+	Precondition: Parameter addOn is a character.
+	@param addOn is the received character. It is used to specify the add on type in full.
+	@return Outputs/results to a printed string. 
+			Invalid/No expected return value. Function (caller) data type is void.
+*/
+//This function is called in functions showPlacementOptions, addAnother, invalidPlace, and getAddOnPos.
 void 
-printAddOnType(char addOn)
+printAddOnType (char addOn)
 {
-	switch(addOn)
+	//prints corresponding string based on addOn.
+	switch (addOn)
 	{
 		case 'L':
 			printf("logo");
@@ -31,24 +55,32 @@ printAddOnType(char addOn)
 			printf("add-on");
 			break;
 		default:
+			//if invalid, print nothing. do nothing.
 			break;
 	}
 }
 
+/*  This function, given a character, prints the corresponding placement options.
+	Precondition: Parameter addOn is a character.
+	@param addOn is the received character. It is the basis in displaying corresponding placement options.
+	@return Outputs/results to printed strings. 
+			Invalid/No expected return value. Function (caller) data type is void.
+*/
+//This function is called in function handleAddOn
 void 
-showPlacementOptions(char addOn) //is this allowed? 5 and 6 + exclusivity? or required 1234 instead of 1256?
+showPlacementOptions (char addOn)
 {
 	//initial placement options. Available to all add-ons.
 	printf("\n");
 	printAddOnType(addOn);
 	printf(OPTION_FOR_ALL);
 	
-	//in add-ons Logo and Patch, show EXCLUSIVE 3 AND 4. In add-on Pocket, show EXCLUSIVE 5 AND 6.
+	//displays options EXCLUSIVE to corresponding add-ons.
 	switch(addOn)
 	{
 		case 'L':
 		case 'P':
-			printf(OPTION_LOGO_PATCH); //options EXCLUSIVE TO LOGO AND PATCH
+			printf(OPTION_LOGO_PATCH); 
 			break;
 		case 'O':
 			printf(OPTION_POCKET); //OPTIONS EXCLUSIVE TO POCKET
@@ -58,8 +90,15 @@ showPlacementOptions(char addOn) //is this allowed? 5 and 6 + exclusivity? or re
 	}
 }
 
+/*  This function, given user's choice, evaluates if the choice is invalid.
+	Precondition: Parameter choice is a character.
+	@param choice is the user's previous input. It is the character being evaluated.
+	@return Outputs/results to 1 (true) if choice is invalid and 0 (false) otherwise. 
+			Expected return value is an integer. 
+*/
+//This function is called in function addAnother 
 int
-isChoiceInvalid(char choice)
+choiceIsInvalid (char choice)
 {
 	int invalid = 1;
 	switch(choice)
@@ -77,8 +116,15 @@ isChoiceInvalid(char choice)
 	return invalid;
 }
 
+/*  This function, given user's choice, evaluates if the choice is Yes.
+	Precondition: Parameter choice is a character.
+	@param choice is the user's previous input. It is the character being evaluated.
+	@return Outputs/results to 1 (true) if choice is yes and 0 (false) otherwise. 
+			Expected return value is an integer. 
+*/
+//This function is called in function addAnother
 int 
-isChoiceYes(char choice)
+choiceIsYes (char choice)
 {
 	int choiceIsYes = 0;
 	switch(choice)
@@ -97,18 +143,28 @@ isChoiceYes(char choice)
 	return choiceIsYes;
 }
 
+/*  This function, asks for user's choice and evaluates if the user chooses to add another add-on.
+	Precondition: Parameter addOn is a character.
+	@param addOn is the user's previous input. It is the character being evaluated.
+	@return Outputs/results to 1 (true) if choice is yes and 0 (false) otherwise. 
+			Expected return value is an integer. 
+*/
+//This function is called in function getAddOn 4 times.
 int 
-addAnother(char addOn)
+addAnother (char addOn)
 {
+	//Declare and initialize variables.
     char option = ' ';
 	int  addMore = 0;
     
+    //Ask for and get inputs.
     printf("\nAdd another ");
    	printAddOnType(addOn);
     printf("? ");
     scanf(" %c", &option);
     
-    while(isChoiceInvalid(option))
+    //Loop and ask for input infinitely until input becomes valid.
+    while (choiceIsInvalid(option))
     {
         printf("\nInvalid option. Do you want to add another "); //if full slots, don't be stuck on add another ? or input valid placement. user cannot be stuck.
         printAddOnType(addOn);
@@ -116,7 +172,8 @@ addAnother(char addOn)
         scanf(" %c",&option);
     }
     
-    if(isChoiceYes(option))
+    //evaluate if user wants to add more.
+    if (choiceIsYes(option))
     {
     	addMore = 1;
 	}
@@ -129,8 +186,15 @@ addAnother(char addOn)
 	return addMore;
 }
 
+/*  This function, given a character, handles invalidPlacementPositions. If applicable, displays current occupant add-on.
+	Precondition: Parameter addOn is a character.
+	@param addOn is the given character. It is the basis to determine if it is simple invalid or invalid because there is an occupant.
+	@return Outputs/results to (a) printed string(s). 
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called twice in function handleInvalid once in getPlacement.
 void
-invalidPlace(char addOn) //function dealing with invalid place and attempting to take another valid input
+invalidPlace (char addOn)
 {
 	printf("\nInvalid placement.");
 	
@@ -147,14 +211,28 @@ invalidPlace(char addOn) //function dealing with invalid place and attempting to
 	}
 }
 
+/*  This function, evaluates if a placement position is available or occupied.
+	Precondition: Parameters addOnPos and addOnsCount are integers,
+			  Parameter currentOccupantPos is a pointer integer,
+			  Parameter arr_addOnPos[] is an integer array,
+			  Parameter arr_addOn is a character array.
+	@param addOnPos is the user's previous input to be evaluated if available.
+	@param addOnsCount is the current addOns quantity. It helps manipulate arrays as an index.
+	@param *currentOccupantPos is used to track the current add-on occupying the space.
+	@param arr_addOnPos[] is the array containing the data about the add-ons' placementpositions.
+	@param arr_addOn[] is the array storing the characters representing the add-ons.
+	@return Outputs/results to 1 (true) if place is indeed occupied and 0 (false) otherwise. 
+			Expected return value is an integer. 
+*/
+//This function is called in function getPlacement.
 int
-isPlaceOccupied(int addOnPos, int addOnsCount, int * currentOccupantPos, int arr_addOnPos[], char arr_addOn[])
+isPlaceOccupied (int addOnPos, int addOnsCount, int * currentOccupantPos, int arr_addOnPos[], char arr_addOn[])
 {
     int counter, placeIsTaken=0;
 
-    for(counter=0;counter<addOnsCount;counter++)
+    for (counter=0;counter<addOnsCount;counter++)
     {
-        if(addOnPos == arr_addOnPos[counter])
+        if (addOnPos == arr_addOnPos[counter])
         {
         	*currentOccupantPos = counter;
             placeIsTaken = 1;
@@ -166,18 +244,24 @@ isPlaceOccupied(int addOnPos, int addOnsCount, int * currentOccupantPos, int arr
             placeIsTaken = 0;
         }
     }
-	printf("\nplaceIsTaken: %d",placeIsTaken);
     return placeIsTaken;
 }
 
+/*  This function, given a character, handles invalidPlacementPositions. If applicable, displays current occupant add-on.
+	Precondition: Parameter addOn is a character.
+	@param addOn is the given character. It is the basis to determine if it is simple invalid or invalid because there is an occupant.
+	@return Outputs/results to (a) printed string(s). 
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called twice in function handleInvalid once in getPlacement.
 void
-updateArrayPos(int addOnPos, int addOnsCount, int arr_addOnPos[])
+updateArrayPos (int addOnPos, int addOnsCount, int arr_addOnPos[])
 {
     int initialCounter;
 
-    for(initialCounter=addOnsCount;initialCounter<=6;initialCounter++)
+    for (initialCounter=addOnsCount;initialCounter<=6;initialCounter++)
     {
-        if(addOnPos==arr_addOnPos[initialCounter])
+        if (addOnPos==arr_addOnPos[initialCounter])
         {
             arr_addOnPos[initialCounter]=arr_addOnPos[addOnsCount];
         }
@@ -186,7 +270,7 @@ updateArrayPos(int addOnPos, int addOnsCount, int arr_addOnPos[])
     arr_addOnPos[addOnsCount] = addOnPos;
 }
 
-void getAddOnPos(char addOn, int * addOnPos)
+void getAddOnPos (char addOn, int * addOnPos)
 {
 	printf("Enter ");
 	printAddOnType(addOn);
@@ -195,18 +279,16 @@ void getAddOnPos(char addOn, int * addOnPos)
 }
 
 void 
-handleInvalid(int * addOnPos, int placeRemainsInvalid, int placeIsOccupied, int currentOccupantPos, char arr_addOn[])
+handleInvalid (int * addOnPos, int placeRemainsInvalid, int placeIsOccupied, int currentOccupantPos, char arr_addOn[])
 {
-	if(placeRemainsInvalid)
+	if (placeRemainsInvalid)
 	{
-		if(placeIsOccupied)
+		if (placeIsOccupied)
 		{
-			printf("entered placeIsOccupied. \n-currentOccupantPos: %d\n-value of arr_addOn[currentOccupantPos]: %c\n",currentOccupantPos, arr_addOn[currentOccupantPos]);
 			invalidPlace(arr_addOn[currentOccupantPos]);
 		}
 		else
 		{	
-			printf(" Enter in else (unoccupied but invalid).\n");
 			invalidPlace(' '); 
 		}
 		printf("\nEnter valid placement: ");
@@ -215,7 +297,7 @@ handleInvalid(int * addOnPos, int placeRemainsInvalid, int placeIsOccupied, int 
 }
 
 void 
-getPlacement(char arr_addOn[], int arr_addOnPos[], int addOnsCount, char addOn) //if addOn is valid, takes its placement
+getPlacement (char arr_addOn[], int arr_addOnPos[], int addOnsCount, char addOn) //if addOn is valid, takes its placement
 {
 	// variable initialization and declaration
 	int addOnPos = 0, placeRemainsInvalid = 1, placeIsOccupied, currentOccupantPos = 0; //by default, placeIsInvalid because addOnPosTemporary is 0 is invalid.
@@ -223,10 +305,10 @@ getPlacement(char arr_addOn[], int arr_addOnPos[], int addOnsCount, char addOn) 
 	//inputs
 	getAddOnPos(addOn, &addOnPos);
 	
-	do //while placeRemainsInvalid is true, loop continuously and ask for valid addOnPos repeatedly
+	while (placeRemainsInvalid)
 	{
 		placeRemainsInvalid = 0;
-		placeIsOccupied = isPlaceOccupied(addOnPos, addOnsCount, &currentOccupantPos, arr_addOnPos, arr_addOn);
+		placeIsOccupied = isPlaceOccupied (addOnPos, addOnsCount, &currentOccupantPos, arr_addOnPos, arr_addOn);
 		switch(addOnPos) //check if 3 and 4 are O coz only L and P are valid. check if 5 and 6 are L and P coz only O is valid
 		{
 			case 1:
@@ -261,19 +343,15 @@ getPlacement(char arr_addOn[], int arr_addOnPos[], int addOnsCount, char addOn) 
 		handleInvalid(&addOnPos, placeRemainsInvalid, placeIsOccupied, currentOccupantPos, arr_addOn);
 		
 		
-	} while(placeRemainsInvalid);
+	}
 	
 	updateArrayPos(addOnPos, addOnsCount, arr_addOnPos);
 	
-	printf("\n!@#$%^&*()\ninput accepted.\n addOn is %c\n addOnPos is %d\n addOnsCount is %d\n",
-		arr_addOn[addOnsCount], arr_addOnPos[addOnsCount], addOnsCount);
-	printf("\n!@#$%^&*()\ncurrent array looks like this: \n");
-	printf("arr_addOn[0] = %c, arr_addOn[1] = %c, arr_addOn[2] = %c, arr_addOn[3] = %c, arr_addOn[4] = %c, arr_addOn[5] = %c\n", arr_addOn[0], arr_addOn[1], arr_addOn[2], arr_addOn[3], arr_addOn[4], arr_addOn[5]);
-	printf("arr_addOnPos[0] = %d, arr_addOnPos[1] = %d, arr_addOnPos[2] = %d, arr_addOnPos[3] = %d, arr_addOnPos[4] = %d, arr_addOnPos[5] = %d\n", arr_addOnPos[0], arr_addOnPos[1], arr_addOnPos[2], arr_addOnPos[3], arr_addOnPos[4], arr_addOnPos[5]);
+	//ARRAYS_VISUALIZER
 }
 
 void
-handleAddOn(char addOn, char arr_addOn[], int arr_addOnPos[], int * addOnsCount)
+handleAddOn (char addOn, char arr_addOn[], int arr_addOnPos[], int * addOnsCount)
 {
     showPlacementOptions(addOn);
     getPlacement(arr_addOn, arr_addOnPos, *addOnsCount, addOn);
@@ -282,7 +360,7 @@ handleAddOn(char addOn, char arr_addOn[], int arr_addOnPos[], int * addOnsCount)
 }
 
 void 
-getColorCount(int addOnsCount, int arr_logoColors[])
+getColorCount (int addOnsCount, int arr_logoColors[])
 {
     int colorCount = 0;
     
@@ -295,17 +373,15 @@ getColorCount(int addOnsCount, int arr_logoColors[])
 }
 
 void 
-getAddOn(char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
+getAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 {
 	//getAddOn Vars or TriggerFlag
 	int addOnsCount = 0; //maybe put to main? so this doesn't get initialized everytime but headache pointers
 	char addOn = ' ';
 	
-	//Print List
-	printf(ADDON_SELECTION);
-	
-	do
+	while(addOnsCount == 0||addOnsCount<6)
 	{
+		printf(ADDON_SELECTION);
 		printf("\nEnter add-on: ");
 		scanf(" %c", &addOn);
 		switch(addOn)
@@ -355,5 +431,5 @@ getAddOn(char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 		{
 			addOnsCount = 6;
 		}
-	} while(addOnsCount == 0||addOnsCount<6);
+	}
 }
