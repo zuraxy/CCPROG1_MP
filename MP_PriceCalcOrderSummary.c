@@ -289,7 +289,6 @@ grandTotalCalc(float * price, int qty)
 void 
 orderSummary(char arr_addOn[], int arr_addOnPos[], int arr_logoColors[], float arr_addOnsPrice[], char size, char neckLine, int qty, float * price)
 {
-	int charactersCount = 0;
 	float baseShirtPrice = basePrice(size, qty);
 	perUnitCalc(arr_addOn, arr_logoColors, arr_addOnsPrice, size,  qty, price);
 	
@@ -317,7 +316,7 @@ changeBreakdown(float price)
 		scanf("%f",&amountGiven);
 	}
 	
-	change = amountGiven-price, actualDenomination;
+	change = amountGiven-price;
 	
 	printf("Total change: P %.2f\nBreakdown of change:\n", change);
 

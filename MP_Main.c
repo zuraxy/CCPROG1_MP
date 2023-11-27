@@ -29,7 +29,6 @@ int main()
 	int qty = 0,
 		option = 0,
 		dayCount = 1,
-		amountGiven = 0,
 		shouldContinue = 1;
 	int arr_dayShirtsCount[999];
 	int arr_addOnPos[6] = { 1, 2, 3, 4, 5, 6 }; //reason for pos is to track which ones are first placed or inputted by user instead of non linear array pos use
