@@ -130,6 +130,7 @@ getSize (char * size)
 			Invalid/No expected return value. Function (caller) data type is void.
 */
 //This function is called in main.
+
 void
 getQtyNeckSize (int * qty, char * neckLine, char * size) 
 {

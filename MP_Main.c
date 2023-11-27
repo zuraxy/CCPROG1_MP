@@ -53,14 +53,13 @@ int main()
 			case 1:
 				resetArrays(arr_addOn, arr_addOnPos, arr_logoColors, arr_addOnsPrice);
 				getQtyNeckSize(&qty, &neckLine, &size);
-				getAddOn(arr_addOn, arr_addOnPos, arr_logoColors);
+				processAddOn(arr_addOn, arr_addOnPos, arr_logoColors);
 				orderSummary(arr_addOn, arr_addOnPos, arr_logoColors, arr_addOnsPrice, size, neckLine, qty, &price);
 				arr_dayShirtsCount[dayCount-1] += qty; printf(" ");
 				arr_totalReceived[dayCount-1] += price;
-				
 				printShirt(size, neckLine, arr_addOn, arr_addOnPos);
 				//CHECKER1
-				//productionTime();
+				displayOrderTimeInfo(qty, arr_addOn);
 				if(confirmOrder())
 				{	
 					changeBreakdown(price);
