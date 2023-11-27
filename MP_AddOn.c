@@ -1,3 +1,26 @@
+/*************************************************************************** 
+This is to certify that this project is my own work, based on my personal efforts in studying and 
+applying the concepts learned. I have constructed the functions and their respective algorithms 
+and corresponding code by myself. The program was run, tested, and debugged by my own 
+efforts. I further certify that I have not copied in part or whole or otherwise plagiarized the 
+work of other students and/or persons.
+ 								Bon Windel E. Aquino, DLSU ID# 12305979 
+***************************************************************************/
+
+/******************************************
+File Name: MP_GetInputs.C
+
+Author: Bon Windel E. Aquino
+Last Update: November 27, 2023
+
+Routines to get the user input for Quantity,
+neckLine, and Shirt size 
+
+The entry point to these routines is the 
+getQtyNeckSize() routine at the bottom 
+of this file. It is called in the main function found in MP_Main.c
+******************************************/
+
 /*
 TO DO:
 *******************************************
@@ -7,22 +30,6 @@ USER CANNOT BE STUCK, NO AVAILABLE FOR P OR L OR O ADD CATCH CASES
 ADD ANOTHER ADD ON SHOULD DISPLAY OPTIONS + space per promptinvalid space
 */
 
-/******************************************
-File Name: MP_AddOn.C
-
-Author: Bon Windel E. Aquino
-Last Update: November 27, 2023
-
-Routines to get the user's inputs for 
-add on types, placements/positions, and
-if applicable, logo colors.
- 
-The entry point to these routines is the 
-getAddOn() routine at the bottom 
-of this file. It is called in the main function found in MP_Main.c
-******************************************/
-
-#include <stdio.h>
 #define OPTION_FOR_ALL " placement options:\n1 - left chest\n2 - right chest"
 #define OPTION_LOGO_PATCH "\n3 - left sleeve\n4 - right sleeve\n\n"
 #define OPTION_POCKET "\n5 - bottom left\n6 - bottom right\n\n"
@@ -451,13 +458,28 @@ getColorCount (int addOnsCount, int arr_logoColors[])
 	arr_logoColors[addOnsCount-1] = colorCount;
 }
 
-int thereAreOptionsLeft(char addOn, int addOnsCount, int arr_addOnPos[])
+/*  This function, evaluates if there are options left based on addOnsCount and array arr_addOnPos.
+	Precondition: Parameters are of correct data type.
+	@param addOn is used to check if that addOn has available positions.
+	@param addOnsCount is used as index to check the data in array arr_addOnPos.
+	@param arr_addOnPos[] containing the occupied placement positions.
+	@return Outputs/results to 0 (false) if there are no options and >0 (true) otherwise.
+			Expected return value is an integer. 
+*/
+//This function is called 6 times in function processAddOn.
+int 
+thereAreOptionsLeft(char addOn, int addOnsCount, int arr_addOnPos[])
 {
+	//Variable declarations and initialization
 	int availableLogoPatchOptions = 4, availablePocketOptions = 4, optionsLeft = 4, valToEvaluate;
 	
-	for(addOnsCount;addOnsCount>0;addOnsCount--)
+	//Use addOnsCount as index to cycle through arr_addOnPos
+	for(;addOnsCount > 0; addOnsCount--)
 	{
+		//set dynamic valtoEvaluate - addOnsCount changes per for loop iteration.
 		valToEvaluate = arr_addOnPos[addOnsCount-1];
+		
+		//once value is evaluated as a particular position, subtract option from addons affected.
 		switch(valToEvaluate)
 		{
 			case 1:
@@ -476,6 +498,7 @@ int thereAreOptionsLeft(char addOn, int addOnsCount, int arr_addOnPos[])
 		}
 	}
 	
+	//prepare to return the optionsLeft for the specific add on
 	switch(addOn)
 	{
 		case 'L':
@@ -498,10 +521,11 @@ int thereAreOptionsLeft(char addOn, int addOnsCount, int arr_addOnPos[])
 	@param arr_addOn[] is passed to functions requiring it.
 	@param arr_addOnPos[] is passed as a parameter to function calls.
 	@param arr_logoColors[] is passed to function that need it.
-	@return Outputs/results to arr_logoColors being updated once input is valid.
+	@return Outputs/results to printed strings, and function calls while modifying
+			arr_addOn, arr_addOnPos, and arr_logoColors arrays.
 			Invalid/No expected return value. Function (caller) data type is void. 
 */
-//This function is called twice in function processAddOn
+//This function is called in main
 void 
 processAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 {
@@ -517,21 +541,28 @@ processAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 		printf("\nEnter add-on: ");
 		scanf(" %c", &addOn);
 		
-		//
+		//Do actions depending on the type of add on
 		switch(addOn)
 		{
 			case 'L':
 			case 'l':
+				//if there are options left, get valid placement position then add 1 to addOnsCount
 				if(thereAreOptionsLeft('L', addOnsCount, arr_addOnPos))
 				{
 					handleAddOn('L', arr_addOn, arr_addOnPos, &addOnsCount);
+					
+					//consequently, get logo color since this is case L.
 					getColorCount(addOnsCount, arr_logoColors);
+					
+					//thereafter, as long as there are options, ask if user wants to add more logo
 					while(thereAreOptionsLeft('L', addOnsCount, arr_addOnPos)&&addAnother('L'))
 					{
 						handleAddOn('L', arr_addOn, arr_addOnPos, &addOnsCount);
 						getColorCount(addOnsCount, arr_logoColors);	
 					}
 				}
+				
+				//If there are no options left, display following string
 				else
 				{
 					printf("Unable to add more. All slots for chosen add-on are occupied");
@@ -540,16 +571,19 @@ processAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 				
 			case 'P':
 			case 'p':
+				//as long as there are remaining options get valid placement position then add 1 to addOnsCount
 				if(thereAreOptionsLeft('P', addOnsCount, arr_addOnPos))
 				{
 					handleAddOn('P', arr_addOn, arr_addOnPos, &addOnsCount);
-	
+					
+					//after first prompt, check if there are options. If there are, ask if user wants to add more.
 					while(thereAreOptionsLeft('P', addOnsCount, arr_addOnPos)&&addAnother('P'))
 					{
 						handleAddOn('P', arr_addOn, arr_addOnPos, &addOnsCount);  	
 					}
 				}
 				
+				//without options available, print string.
 				else
 				{
 					printf("Invalid. All slots for chosen add-on are occupied.");
@@ -559,27 +593,33 @@ processAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 				
 			case 'O':
 			case 'o':
+				//if there are options left, get valid placement position and add 1 to addOnsCount
 				if(thereAreOptionsLeft('O', addOnsCount, arr_addOnPos))
 				{ 
 					handleAddOn('O', arr_addOn, arr_addOnPos, &addOnsCount);
+					
+					//after first prompt, check if there are remaining slots for add-on. If there are, ask if user wants to add more.
 					while(thereAreOptionsLeft('O', addOnsCount, arr_addOnPos)&&addAnother('O'))
 					{
 						handleAddOn('O', arr_addOn, arr_addOnPos, &addOnsCount);  	
 					}
 				}
 				
+				//without any unoccupied slots, print ff:
 				else
 				{
 					printf("Invalid. All slots for chosen add-on are occupied.");
 				}
-				
 				break;
+				
 			default:
+				//if specified add on is not L, P, or O, then print ff:
 				printf("Invalid choice.");
 				addOn = ' ';
 				break;
 		}
-			
+		
+		//user cannot decline if there are no add-ons placed
 		if(addOnsCount == 0)
 		{
 			if(addOn!=' ')
@@ -587,6 +627,8 @@ processAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 				printf(" A minimum of one add-on is required. "); 
 			}//catch cases of user canceling entirely after this requirement is read.
 		}
+		// if there are addOns placed and it's less than 6, 
+		// and user DOES NOT WANT TO ADD ANOTHER and value is not default, break out of loop by maxing addOnsCount.
 		else if(addOnsCount<6&&!addAnother('+')&&addOn!=' ')
 		{
 			addOnsCount = 6;

@@ -21,14 +21,13 @@ getQtyNeckSize() routine at the bottom
 of this file. It is called in the main function found in MP_Main.c
 ******************************************/
 
-#include <stdio.h>
-
 /*  This function takes user input for shirt quantity and assigns it to the variable qty found in main.
 	Precondition: User's input is an integer.
 	@param *qty is an integer pointer used to access variable quantity in main.
 	@return Outputs/results to (a) printed string(s) and a taken user input used to modify variable qty in main.
 			Invalid/No expected return value. Function (caller) data type is void. 
 */
+
 void 
 getQuantity (int * qty) //This 'child' function is used in and called by 'parent' function getQtyNeckSize.
 {
@@ -130,7 +129,6 @@ getSize (char * size)
 			Invalid/No expected return value. Function (caller) data type is void.
 */
 //This function is called in main.
-
 void
 getQtyNeckSize (int * qty, char * neckLine, char * size) 
 {
