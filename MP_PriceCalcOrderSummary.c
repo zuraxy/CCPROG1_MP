@@ -286,7 +286,6 @@ grandTotalCalc(float * price, int qty)
 	printf("                    Total Bill for Order:    P %10.2f\n",*price);
 }
 
-//
 void 
 orderSummary(char arr_addOn[], int arr_addOnPos[], int arr_logoColors[], float arr_addOnsPrice[], char size, char neckLine, int qty, float * price)
 {

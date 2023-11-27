@@ -247,13 +247,18 @@ isPlaceOccupied (int addOnPos, int addOnsCount, int * currentOccupantPos, int ar
     return placeIsTaken;
 }
 
-/*  This function, given a character, handles invalidPlacementPositions. If applicable, displays current occupant add-on.
-	Precondition: Parameter addOn is a character.
-	@param addOn is the given character. It is the basis to determine if it is simple invalid or invalid because there is an occupant.
-	@return Outputs/results to (a) printed string(s). 
+/*  This function updates and swaps values in the array arr_addOnPos[] if
+	user's placement position is equal to latter values in the array
+	since default array value is set to [1,2,3,4,5,6],
+	i.e first input = 6; array swaps 1 and 6 and becomes [6,2,3,4,5,1] 
+	Precondition: Parameters addOnPos, addOnsCount, and array arr_addOnPos are integers.
+	@param addOnPos contains the value of accepted user's input for placement position
+	@param addOnsCount contains the value of addOns currently in the shirt.
+	@param arr_addOnPos[] is the array containing all the specific positions of the addOns.
+	@return Outputs/results to array arr_addOnPos being updated, if applicable. 
 			Invalid/No expected return value. Function (caller) data type is void. 
 */
-//This function is called twice in function handleInvalid once in getPlacement.
+//This function is called in function getPlacement.
 void
 updateArrayPos (int addOnPos, int addOnsCount, int arr_addOnPos[])
 {
@@ -270,7 +275,16 @@ updateArrayPos (int addOnPos, int addOnsCount, int arr_addOnPos[])
     arr_addOnPos[addOnsCount] = addOnPos;
 }
 
-void getAddOnPos (char addOn, int * addOnPos)
+/*  This function gets user input for placement position and updates *addOnPos accordingly.
+	Precondition: Parameter *addOnPos is an integer pointer.
+	@param char addOn prints the add on represented by the character through function printAddOnType
+	@param *addOnPos is used to store user input in variable addOnPos declared in function getPlacement
+	@return Outputs/results to said variable addOnPos being updated.
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called in function getPlacement.
+void 
+getAddOnPos (char addOn, int * addOnPos)
 {
 	printf("Enter ");
 	printAddOnType(addOn);
@@ -278,6 +292,18 @@ void getAddOnPos (char addOn, int * addOnPos)
 	scanf("%d", addOnPos);
 }
 
+/*  This function manages invalid user input for placement position and asks user again for valid placement.
+	Precondition: Parameter *addOnPos is an integer pointer, 
+	parameters placeRemainsInvalid, placeIsOccupied, currentOccupantPos are integers, and arr_addOn is a character array.
+	@param *addOnPos is used to access addOnPos variable in function getPlacement and store input there.
+	@param placeRemainsInvalid is used to check if user input is valid.
+	@param placeIsOccupied is used to create printf variations - whether or not simple invalid or invalid because occupied.
+	@param currentOccupantPos is used to track which add-on occupies the position indicated in previous user input.
+	@param arr_addOn[] is used to read/write in the array containing the specific add-ons.
+	@return Outputs/results to strings being printed and a prompt for valid user input.
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called in function getPlacement.
 void 
 handleInvalid (int * addOnPos, int placeRemainsInvalid, int placeIsOccupied, int currentOccupantPos, char arr_addOn[])
 {
@@ -296,60 +322,104 @@ handleInvalid (int * addOnPos, int placeRemainsInvalid, int placeIsOccupied, int
 	}
 }
 
+/*  This function gets the user's input for placement, repeats prompt if it is invalid and once valid, updates array accordingly.
+	Precondition: Parameters are of correct data type. 
+	parameters placeRemainsInvalid, placeIsOccupied, currentOccupantPos are integers, and arr_addOn is a character array.
+	@param arr_addOn[] is passed as a parameter to 'child' functions that this 'parent' function calls.
+	@param arr_addOnPos[] is similarly passed as a parameter to 'child' functions that this 'parent' function calls.
+	@param addOnsCount is qty of addOns placed. It is passed as a parameter to 'child' functions that this 'parent' function calls.
+	@param addOn is the chosen add-on and is also passed as a parameter to 'child' functions this 'parent' function calls.
+	@return Outputs/results to arr_addOnPos being updated accordingly once user's input is valid.
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called in function handleAddOn
 void 
-getPlacement (char arr_addOn[], int arr_addOnPos[], int addOnsCount, char addOn) //if addOn is valid, takes its placement
+getPlacement (char arr_addOn[], int arr_addOnPos[], int addOnsCount, char addOn)
 {
-	// variable initialization and declaration
-	int addOnPos = 0, placeRemainsInvalid = 1, placeIsOccupied, currentOccupantPos = 0; //by default, placeIsInvalid because addOnPosTemporary is 0 is invalid.
+	// variables declaraed and initialized.
+	int addOnPos = 0, placeRemainsInvalid = 1, placeIsOccupied = 0, currentOccupantPos = 0; 
 	
-	//inputs
+	//get input.
 	getAddOnPos(addOn, &addOnPos);
 	
+	//while user input is invalid, check if occupied or is within range of options. If both returns falls, go out of loop.
 	while (placeRemainsInvalid)
 	{
+		//after while loop entry, re-assign to false. naturally breaks out of loop if placement is not seen as invalid.
 		placeRemainsInvalid = 0;
+		
+		//call isPlaceOccupied function to check if user's input placement option is already occupied.
 		placeIsOccupied = isPlaceOccupied (addOnPos, addOnsCount, &currentOccupantPos, arr_addOnPos, arr_addOn);
-		switch(addOnPos) //check if 3 and 4 are O coz only L and P are valid. check if 5 and 6 are L and P coz only O is valid
+		
+		//If the placement position selected by user is within options provided, check if place is occupied. Otherwise, invalid.
+		switch(addOnPos)
 		{
+			//option 1 and option 2 are naturally available to the 3 add-ons. Only thing left to validate is if position is free.
 			case 1:
 			case 2:
 				placeRemainsInvalid = placeIsOccupied;
 				break;
+				
+			//option 3 and 4 is EXCLUSIVE to logo and patch.	
 			case 3:
 			case 4:
+				//if add on is neither logo or patch, invalid. 
 				if(addOn!='L'&&addOn!='P')
 				{
 					invalidPlace(' ');      
 					placeRemainsInvalid = 1;
-					placeIsOccupied = 0;
+					
+					//placeIsOccupied is set to 0 to avoid unnecessary display of occupant add-on.
+					placeIsOccupied = 0; 
 				}
-				else placeRemainsInvalid = placeIsOccupied;
+				
+				//else, if it is either, then just check if place is occupied because it's the only thing left to verify/validate.
+				else 
+				{
+					placeRemainsInvalid = placeIsOccupied;	
+				}
 				break;
+			
+			//same case as 3 and 4 but this time, 5 and 6 is EXCLUSIVE to pocket.
 			case 5:
 			case 6:
 				if(addOn!='O')
 				{                        
 					placeRemainsInvalid = 1;
+					
+					//placeIsOccupied is set to 0 to avoid unnecessary display of occupant add-on.
 					placeIsOccupied = 0;
 				}
-				else placeRemainsInvalid = placeIsOccupied;
+				
+				else 
+				{
+					placeRemainsInvalid = placeIsOccupied;	
+				}
 				break;
 				
 			default: 
 				placeRemainsInvalid = 1;
+				
+				//placeIsOccupied is set to 0 to avoid unnecessary display of occupant add-on.
 				placeIsOccupied = 0;
 				break;
 		}
+		//Since placeRemainsInvalid, handleInvalid. This func prints additional context and info then asks for valid input.
 		handleInvalid(&addOnPos, placeRemainsInvalid, placeIsOccupied, currentOccupantPos, arr_addOn);
-		
-		
 	}
-	
 	updateArrayPos(addOnPos, addOnsCount, arr_addOnPos);
-	
-	//ARRAYS_VISUALIZER
 }
 
+/*  This function deals with repeated routines of function calls and value assignments in function getAddOn
+	Precondition: Parameters are of correct data type. 
+	@param addOn is passed in functions called and is assigned to array arr_addOn once placement is valid.
+	@param arr_addOn[] is passed as a parameter in function calls and is updated accordingly.
+	@param arr_addOnPos[] is passed as a parameter when calling function getPlacement
+	@param *addOnsCount is used as an index to arr_addOn and is incremented when processes are done.
+	@return Outputs/results to arr_addOnPos being updated accordingly once user's input is valid.
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called 6 times in function processAddOn
 void
 handleAddOn (char addOn, char arr_addOn[], int arr_addOnPos[], int * addOnsCount)
 {
@@ -359,66 +429,156 @@ handleAddOn (char addOn, char arr_addOn[], int arr_addOnPos[], int * addOnsCount
     *addOnsCount+=1;
 }
 
+/*  This function gets the logo color count and assigns the value to arr_logoColors
+	Precondition: Parameters are of correct data type. 
+	@param addOnsCount is used as an index for arr_logoColors
+	@param arr_logoColors[] is an array storing the value for logo colors.
+	@return Outputs/results to arr_logoColors being updated once input is valid.
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called twice in function processAddOn
 void 
 getColorCount (int addOnsCount, int arr_logoColors[])
 {
     int colorCount = 0;
     
-	do{
+	while(colorCount<=0||colorCount>5)
+	{
 		printf("How many colors (1-5) is the logo? ");
     	scanf("%d",&colorCount);
-	} while(colorCount<=0||colorCount>5);
+	} 
     
 	arr_logoColors[addOnsCount-1] = colorCount;
 }
 
-void 
-getAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
+int thereAreOptionsLeft(char addOn, int addOnsCount, int arr_addOnPos[])
 {
-	//getAddOn Vars or TriggerFlag
-	int addOnsCount = 0; //maybe put to main? so this doesn't get initialized everytime but headache pointers
+	int availableLogoPatchOptions = 4, availablePocketOptions = 4, optionsLeft = 4, valToEvaluate;
+	
+	for(addOnsCount;addOnsCount>0;addOnsCount--)
+	{
+		valToEvaluate = arr_addOnPos[addOnsCount-1];
+		switch(valToEvaluate)
+		{
+			case 1:
+			case 2:
+				availableLogoPatchOptions--;
+				availablePocketOptions--;
+				break;
+			case 3:
+			case 4:
+				availableLogoPatchOptions--;
+				break;
+			case 5:
+			case 6:
+				availablePocketOptions--;
+				break;
+		}
+	}
+	
+	switch(addOn)
+	{
+		case 'L':
+			optionsLeft = availableLogoPatchOptions;
+			break;
+		case 'P':
+			optionsLeft = availableLogoPatchOptions;
+			break;
+		case 'O':
+			optionsLeft = availablePocketOptions;
+			break;
+	}
+	
+	return optionsLeft;
+}
+
+/*  This function completes the task of processing add ons by calling functions that
+	were modularized to perform subdivided tasks.
+	Precondition: Parameters are of correct data type. 
+	@param arr_addOn[] is passed to functions requiring it.
+	@param arr_addOnPos[] is passed as a parameter to function calls.
+	@param arr_logoColors[] is passed to function that need it.
+	@return Outputs/results to arr_logoColors being updated once input is valid.
+			Invalid/No expected return value. Function (caller) data type is void. 
+*/
+//This function is called twice in function processAddOn
+void 
+processAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
+{
+	//declare and initialize variables.
+	int addOnsCount = 0;
 	char addOn = ' ';
 	
-	while(addOnsCount == 0||addOnsCount<6)
+	//minimum of 1 add-on and maximum of 6 add-ons
+	while(addOnsCount == 0 || addOnsCount<6)
 	{
+		//print defined string and ask for input
 		printf(ADDON_SELECTION);
 		printf("\nEnter add-on: ");
 		scanf(" %c", &addOn);
+		
+		//
 		switch(addOn)
-			{
+		{
 			case 'L':
 			case 'l':
-				handleAddOn('L', arr_addOn, arr_addOnPos, &addOnsCount);
-				getColorCount(addOnsCount, arr_logoColors);
-				while(addAnother('L'))
+				if(thereAreOptionsLeft('L', addOnsCount, arr_addOnPos))
 				{
 					handleAddOn('L', arr_addOn, arr_addOnPos, &addOnsCount);
-					getColorCount(addOnsCount, arr_logoColors);	
+					getColorCount(addOnsCount, arr_logoColors);
+					while(thereAreOptionsLeft('L', addOnsCount, arr_addOnPos)&&addAnother('L'))
+					{
+						handleAddOn('L', arr_addOn, arr_addOnPos, &addOnsCount);
+						getColorCount(addOnsCount, arr_logoColors);	
+					}
+				}
+				else
+				{
+					printf("Unable to add more. All slots for chosen add-on are occupied");
 				}
 				break;
 				
 			case 'P':
 			case 'p':
-				handleAddOn('P', arr_addOn, arr_addOnPos, &addOnsCount); 
-				while(addAnother('P'))
+				if(thereAreOptionsLeft('P', addOnsCount, arr_addOnPos))
 				{
-					handleAddOn('P', arr_addOn, arr_addOnPos, &addOnsCount);  	
-				} 
+					handleAddOn('P', arr_addOn, arr_addOnPos, &addOnsCount);
+	
+					while(thereAreOptionsLeft('P', addOnsCount, arr_addOnPos)&&addAnother('P'))
+					{
+						handleAddOn('P', arr_addOn, arr_addOnPos, &addOnsCount);  	
+					}
+				}
+				
+				else
+				{
+					printf("Invalid. All slots for chosen add-on are occupied.");
+				}
+				
 				break;
 				
 			case 'O':
-			case 'o': 
-				handleAddOn('O', arr_addOn, arr_addOnPos, &addOnsCount);  
-				while(addAnother('O'))
-				{
-					handleAddOn('O', arr_addOn, arr_addOnPos, &addOnsCount);  	
+			case 'o':
+				if(thereAreOptionsLeft('O', addOnsCount, arr_addOnPos))
+				{ 
+					handleAddOn('O', arr_addOn, arr_addOnPos, &addOnsCount);
+					while(thereAreOptionsLeft('O', addOnsCount, arr_addOnPos)&&addAnother('O'))
+					{
+						handleAddOn('O', arr_addOn, arr_addOnPos, &addOnsCount);  	
+					}
 				}
+				
+				else
+				{
+					printf("Invalid. All slots for chosen add-on are occupied.");
+				}
+				
 				break;
 			default:
 				printf("Invalid choice.");
 				addOn = ' ';
 				break;
-			}
+		}
 			
 		if(addOnsCount == 0)
 		{
@@ -427,7 +587,7 @@ getAddOn (char arr_addOn[], int arr_addOnPos[], int arr_logoColors[])
 				printf(" A minimum of one add-on is required. "); 
 			}//catch cases of user canceling entirely after this requirement is read.
 		}
-		else if(!addAnother('+')&&addOn!=' ')
+		else if(addOnsCount<6&&!addAnother('+')&&addOn!=' ')
 		{
 			addOnsCount = 6;
 		}

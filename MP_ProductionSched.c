@@ -1,28 +1,55 @@
 #include <stdio.h>
-void dayCalc(int Qty, char arr_addOn[])
+void 
+dayCalc(char arr_addOn[], int qty, int * secondsPerPiece, int * productionTime, int * daysUntilPickUp)
 {
-	int secPiece=0, totalDur = 0,i;
-	for (i = 0; i < 6;i++)
+	int counter;
+	char addOnType = ' ';
+	for (counter = 0; counter < 6; counter++)
 	{
-		switch (arr_addOn[i])
+		addOnType = arr_addOn[counter];
+		switch (addOnType)
 		{
-		case 'l':
 		case 'L':
-			secPiece += 60;
+			*secondsPerPiece += 60;
 			break;
-		case 'p':
 		case 'P':
-			secPiece += 20;
+			*secondsPerPiece += 20;
 			break;
-		case 'o':
 		case 'O':
-			secPiece += 30;
+			*secondsPerPiece += 30;
 			break;
 		default:
 			break;
 		}
 	}
-	totalDur = secPiece * Qty;
+	*productionTime = *secondsPerPiece * qty;
+	*daysUntilPickUp = 2 + (*productionTime / 43200);
+}
+
+void 
+convertTime(int productionTime, int * hours, int * mins, int * sec)
+{
+	*hours = productionTime/3600;
+	productionTime-=*hours*3600;
+	*mins = productionTime/60;
+	productionTime-=*mins*60;
+	*sec = productionTime;
+}
+
+void
+displayOrderTimeInfo(int qty, char arr_addOn[])
+{
+	int secondsPerPiece = 0, 
+		productionTime = 0, 
+		daysUntilPickUp = 0, 
+		hours = 0, 
+		mins = 0, 
+		sec = 0;
+		
+	dayCalc(arr_addOn, qty, &secondsPerPiece, &productionTime, &daysUntilPickUp);
+	convertTime(productionTime, &hours, &mins, &sec);
+	printf("Production Time: %d hours %d minutes %d seconds\n", hours, mins, sec);
+	printf("Order can be picked up after %d days\n\n",daysUntilPickUp);
 }
 
 int 
@@ -53,6 +80,5 @@ confirmOrder()
 				break;
 		}
 	}
-	
 	return saysYes;
 }
